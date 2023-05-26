@@ -1,1 +1,1 @@
-# csi-hostpath-cbt-service
+# sample-csi-cbt-service
