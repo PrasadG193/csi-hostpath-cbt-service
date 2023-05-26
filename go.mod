@@ -1,4 +1,4 @@
-module github.com/PrasadG193/csi-hostpath-cbt-service
+module github.com/PrasadG193/sample-csi-cbt-service
 
 go 1.19
 
