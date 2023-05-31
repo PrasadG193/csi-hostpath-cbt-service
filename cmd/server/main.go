@@ -39,6 +39,7 @@ type Server struct {
 
 func (s *Server) GetDelta(req *pgrpc.GetDeltaRequest, stream pgrpc.SnapshotMetadata_GetDeltaServer) error {
 	log.Println("Received request::", req.String())
+	// Generate and send fake data
 	resp := pgrpc.GetDeltaResponse{
 		BlockMetadataType: pgrpc.BlockMetadataType_FIXED_LENGTH,
 		VolumeSizeBytes:   1024 * 1024 * 1024,
