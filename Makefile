@@ -9,7 +9,7 @@ IMAGE_TAG_SERVER ?= latest
 build:
 	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build  -o grpc-server ./cmd/server/main.go
 
-image:
+image: build
 	docker buildx build --platform=linux/amd64 -t $(IMAGE_REPO_SERVER):$(IMAGE_TAG_SERVER) -f Dockerfile-grpc .
 
 push:
