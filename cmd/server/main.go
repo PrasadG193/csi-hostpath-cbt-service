@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -28,7 +27,7 @@ func main() {
 	s := grpc.NewServer()
 	reflection.Register(s)
 	pgrpc.RegisterSnapshotMetadataServer(s, &Server{})
-	fmt.Println("SERVER STARTED!")
+	log.Println("SERVER STARTED!")
 	if err := s.Serve(listener); err != nil {
 		log.Fatal(err)
 	}
@@ -39,22 +38,28 @@ type Server struct {
 }
 
 func (s *Server) GetDelta(req *pgrpc.GetDeltaRequest, stream pgrpc.SnapshotMetadata_GetDeltaServer) error {
-	fmt.Println("Received request::", req.String())
+	log.Println("Received request::", req.String())
 	resp := pgrpc.GetDeltaResponse{
 		BlockMetadataType: pgrpc.BlockMetadataType_FIXED_LENGTH,
 		VolumeSizeBytes:   1024 * 1024 * 1024,
 		BlockMetadata: []*pgrpc.BlockMetadata{
 			&pgrpc.BlockMetadata{
-				ByteOffset: 1,
-				SizeBytes:  1024 * 1024,
+				SizeBytes: 1024 * 1024,
+			},
+			&pgrpc.BlockMetadata{
+				SizeBytes: 1024 * 1024,
 			},
 		},
 	}
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 20; i++ {
 		resp.BlockMetadata[0].ByteOffset = uint64(i)
+		resp.BlockMetadata[1].ByteOffset = uint64(i + 1)
+		i++
+		log.Println("Sending response to external-snap-session-svc")
 		if err := stream.Send(&resp); err != nil {
 			return err
 		}
 	}
+	log.Println("End of the session")
 	return nil
 }
