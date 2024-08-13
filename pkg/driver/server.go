@@ -3,7 +3,7 @@ package driver
 import (
 	"log"
 
-	csigrpc "github.com/PrasadG193/external-snapshot-metadata/pkg/grpc"
+	"github.com/container-storage-interface/spec/lib/go/csi"
 	"google.golang.org/grpc"
 )
 
@@ -21,7 +21,7 @@ func (s *Server) Stop() {
 	s.cleanup()
 }
 
-func (s *Server) Start(endpoint string, md csigrpc.SnapshotMetadataServer) {
+func (s *Server) Start(endpoint string, md csi.SnapshotMetadataServer, ids csi.IdentityServer) {
 	listener, cleanup, err := Listen(endpoint)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
@@ -31,7 +31,8 @@ func (s *Server) Start(endpoint string, md csigrpc.SnapshotMetadataServer) {
 
 	s.cleanup = cleanup
 
-	csigrpc.RegisterSnapshotMetadataServer(server, md)
+	csi.RegisterSnapshotMetadataServer(server, md)
+	csi.RegisterIdentityServer(server, ids)
 
 	log.Printf("Listening for connections on address: %#v", listener.Addr())
 	server.Serve(listener)
